@@ -1,3 +1,3 @@
-rootProject.name = 'Factor'
+rootProject.name = 'Faketory'
 
 include 'lib'
