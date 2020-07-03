@@ -38,6 +38,12 @@ private val arrayList = ArrayList<Any>()
 private val linkedList = LinkedList<Any>()
 private val hashMap = HashMap<Any, Any>()
 
+private val date = Date(1)
+private val calendar = Calendar.getInstance().apply {
+    time = date
+}
+private val locale = Locale.US
+
 object Faketory {
 
     data class Config(
@@ -85,7 +91,12 @@ object Faketory {
 
         //sealed and enum
         val sealedClassResolver: (KType, Config) -> Any = ::resolveSealedClass,
-        val enumClassResolver: (KType, Config) -> Any = ::resolveEnumClass
+        val enumClassResolver: (KType, Config) -> Any = ::resolveEnumClass,
+
+        //special types
+        val dateClassResolver: (KParameter) -> Date = { Date(System.currentTimeMillis()) },
+        val calendarClassResolver: (KParameter) -> Calendar = { Calendar.getInstance() },
+        val localeClassResolver: (KParameter) -> Locale = { Locale("en", "US") }
     )
 
     val randomFieldConfig = Config()
@@ -117,13 +128,20 @@ object Faketory {
         booleanArrayGenerator = { booleanArray },
         arrayListGenerator = { _, _ -> arrayList },
         linkedListGenerator = { _, _ -> linkedList },
-        hashMapGenerator = { _, _, _ -> hashMap }
+        hashMapGenerator = { _, _, _ -> hashMap },
+        dateClassResolver = { date },
+        calendarClassResolver = { calendar },
+        localeClassResolver = { locale }
     )
 
     var defaultConfig = staticFieldConfig
 
-    inline fun <reified T : Any> create(configs: Config? = null): T {
-        return create(typeOf<T>(), configs ?: defaultConfig)
+    fun <T : Any> create(reference : TypeReference<T>, configs: Config = defaultConfig) : T {
+        return create(reference.kType, configs)
+    }
+
+    inline fun <reified T : Any> create(configs: Config = defaultConfig): T {
+        return create(typeOf<T>(), configs)
     }
 
     fun <T : Any> create(type: KType, configs: Config = defaultConfig): T {
@@ -298,6 +316,11 @@ object Faketory {
             booleanArrayType -> configs.booleanArrayGenerator(parameter)
             byteArrayType -> configs.byteArrayGenerator(parameter)
             uByteArrayType -> configs.uByteArrayGenerator(parameter)
+
+            //special types
+            dateType -> configs.dateClassResolver(parameter)
+            calendarType -> configs.calendarClassResolver(parameter)
+            localeType -> configs.localeClassResolver(parameter)
             else -> null
         }
 
@@ -371,7 +394,6 @@ private fun rUShort(): UShort =
 
 private fun rInt(): Int =
     Random.nextInt()
-
 
 private fun rUInt(): UInt =
     Random.nextUInt()
@@ -491,3 +513,7 @@ private val arrayListClass = ArrayList::class
 private val linkedListClass = LinkedList::class
 private val hashMapClass = HashMap::class
 
+//special types
+private val dateType = typeOf<Date>()
+private val localeType = typeOf<Locale>()
+private val calendarType = typeOf<Calendar>()

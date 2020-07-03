@@ -3,8 +3,7 @@ package com.worldsnas.faketory
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
-
-//import org.junit.Assert.*
+import java.util.*
 
 class FaketoryTest {
 
@@ -18,7 +17,7 @@ class FaketoryTest {
     }
 
     @Test
-    fun `successfully creates a class with primitives`() {
+    fun `creates a class with primitives`() {
         val expected = ClassWithPrimitives()
 
         val actual = Faketory.create<ClassWithPrimitives>()
@@ -27,7 +26,7 @@ class FaketoryTest {
     }
 
     @Test
-    fun `successfully creates a class with default constructor`() {
+    fun `creates a class with default constructor`() {
         val expected = ClassWithDefault()
 
         val actual = Faketory.create<ClassWithDefault>(
@@ -38,12 +37,56 @@ class FaketoryTest {
     }
 
     @Test
-    fun `creates class with primitive arrays`(){
-        val expected = ClassWithPrimitiveArrays()
+    fun `creates class with Date`() {
+        val expected = ClassWithDate(Date(1))
 
-        val actual = Faketory.create<ClassWithPrimitiveArrays>()
+        val actual = Faketory.create<ClassWithDate>()
 
         assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `creates class with Locale`() {
+        val expected = ClassWithLocale(Locale.US)
+
+        val actual = Faketory.create<ClassWithLocale>()
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `creates class with Calendar`() {
+        val calendar = Calendar.getInstance().apply {
+            time = Date(1)
+        }
+        val expected = ClassWithCalendar(calendar)
+
+        val actual = Faketory.create<ClassWithCalendar>()
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `creates class with type parameters`() {
+        val expected = ClassWithTypeParameter<Short, Int, String>(1, "")
+
+        val actual = Faketory.create<ClassWithTypeParameter<Short, Int, String>>()
+
+        assertThat(actual).isEqualTo(expected)
+
+    }
+
+    @Test
+    fun `creates parameterized class  with java TypeReference`() {
+        val expected = ClassWithTypeParameter<Short, Int, String>(1, "")
+
+        val reference = object : TypeReference<ClassWithTypeParameter<Short, Int, String>>() {}
+
+
+        val actual = Faketory.create(reference)
+
+        assertThat(actual).isEqualTo(expected)
+
     }
 
 }
@@ -64,21 +107,6 @@ data class ClassWithPrimitives(
     val w: UShort = 1.toUShort(),
     val x: Short = 1.toShort(),
     val z: String = ""
-)
-
-data class ClassWithPrimitiveArrays(
-    val i: ByteArray = byteArrayOf(),
-    val j: IntArray = intArrayOf(),
-    val k: ShortArray = shortArrayOf(),
-    val l: LongArray = longArrayOf(),
-    val m: DoubleArray = doubleArrayOf(),
-    val n: FloatArray = floatArrayOf(),
-    val o: CharArray = charArrayOf(),
-    val p: BooleanArray = booleanArrayOf(),
-    val r: UByteArray = ubyteArrayOf(),
-    val s: UIntArray = uintArrayOf(),
-    val t: ULongArray = ulongArrayOf(),
-    val y: UShortArray = ushortArrayOf()
 )
 
 class ClassWithDefault {
@@ -105,3 +133,20 @@ class ClassWithDefault {
 
 
 }
+
+data class ClassWithTypeParameter<T, K, B>(
+    val k: K,
+    val b: B
+)
+
+data class ClassWithDate(
+    val date: Date
+)
+
+data class ClassWithLocale(
+    val date: Locale
+)
+
+data class ClassWithCalendar(
+    val date: Calendar
+)
