@@ -1,9 +1,15 @@
 # Faketory  [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.worldsnas/faketory/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.rsql/rsql-parser)
-A generic fake factory for Java/Kotlin tests.
+A generic fake factory for Java/Kotlin POJO/POKO.
 
-This library creates an instance of your classes. It's mostly usefull when testing your code and it involves creating many (hard-coding) instance creation. 
-With Faketory you can  focus more on your tests not on how should I create this objects.
+This library can create an instance of your classes. The idea behind is to avoid creating instances of DTOs/Entities/Domain objects manually.
 
+The main usecase is in tests. creating objects for tests is usually very time consuming and can deviate our attention from the tests. Changes in our POJO/POKOs will cause refactoring in our tests, even if we are not touching that part.
+With Faketory you can focus on your test.
+
+
+## Another mocking library?
+
+Faketory is not a mocking library, because it creates real objects and does not control their behaviour. Also, it can not create abstract classes and interfaces (as they are usually not our real domain objects). 
 
 ## Usage
 
