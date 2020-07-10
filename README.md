@@ -15,7 +15,7 @@ Faketory is not a mocking library, because it creates real objects and does not 
 
 Import the dependency:
 
-```
+```Gradle
 testImplementation "com.worldsnas:faketory:$latestVersion"
 ```
 
@@ -23,13 +23,13 @@ Start creating objects:
 
 ### Kotlin
 
-```
+```Kotlin
 val objectOfYourClass = Faketory.create<YourClass>()
 ```
 
 ### Java
 
-```
+```Java
 TypeReference<YourClass> reference = new TypeReference<YourClass>() {};
 
 YourClass objectOfYourClass = Faketory.create(reference, config);
@@ -49,7 +49,7 @@ You can override the default behavior in two ways:
 
 1. Setting a new `Config` to static `Faketory.defaultConfig` field. You can use Kotlin `copy` function to avoid passing all the parameters:
 
-```
+```Kotlin
 Faketory.defaultConfig = Faketory.defaultConfig.copy(
             useDefaultConstructor = false,
             setNull = false,
@@ -61,7 +61,7 @@ This approach is good to setup Faketory once (for example: in @BeforeClass) and 
 
 2. If you want more control for each test, you can pass your new `Config` object to the `Faketory.create` function:
 
-```
+```Kotlin
 val actual = Faketory.create<ClassWithDefault>(
             Faketory.defaultConfig.copy(useDefaultConstructor = true)
         )
